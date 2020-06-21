@@ -42,7 +42,6 @@ resource "aws_route_table" "tf_public_rt" {
     Name = "tf_public_rt"
   }
 }
-
 resource "aws_route_table" "tf_private_rt" {
   vpc_id = "aws_vpc.tf_vpc.id"
   tags = {
@@ -60,7 +59,6 @@ resource "aws_subnet" "tf_public1_subnet" {
     Name = "tf_public1"
   }
 }
-
 resource "aws_subnet" "tf_private1_subnet" {
   vpc_id = "aws_vpc.tf_vpc.id"
   cidr_block = var.aws_cidrs["private1"]
@@ -76,8 +74,29 @@ resource "aws_route_table_association" "tf_public1_association" {
   subnet_id = "aws_subnet.tf_public1_subnet.id"
   route_table_id = "aws_route_table.tf_public_rt.id"
 }
-
 resource "aws_route_table_association" "tf_private1_association" {
   subnet_id = "aws_subnet.tf_private1_subnet.id"
   route_table_id = "aws_default_route_table.tf_private_rt.id"
 }
+
+# Security Groups
+resource "aws_security_group" "tf_dev_sg" {
+  Name = "tf_dev_sg"
+  Description = "Used for access to Dev instances"
+  vpc_id = "aws_vpc.tf_vpc.id"
+  
+  # SSH
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [var.localip]
+  }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }  
+}
+  
