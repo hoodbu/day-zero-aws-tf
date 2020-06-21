@@ -47,9 +47,19 @@ resource "aws_route_table" "tf_route_table" {
 resource "aws_subnet" "tf_public1_subnet" {
   vpc_id = "aws_vpc.tf_vpc.id"
   cidr_block = var.cidrs["public1"]
+  map_public_ip_on_launch = true
+  availability_zone = data.aws_availability_zone.available.names[0]
+  tags = {
+    Name = "tf_public1"
+  }
 }
 
-resource "aws_eip" "ip" {
-    vpc = true
-    instance = aws_instance.example.id
+resource "aws_subnet" "tf_private1_subnet" {
+  vpc_id = "aws_vpc.tf_vpc.id"
+  cidr_block = var.cidrs["private1"]
+  map_public_ip_on_launch = false
+  availability_zone = data.aws_availability_zone.available.names[0]
+  tags = {
+    Name = "tf_private1"
+  }
 }
