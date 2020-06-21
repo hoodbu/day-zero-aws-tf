@@ -8,27 +8,45 @@ resource "aws_instance" "example" {
   instance_type = "t2.micro"
   vpc_security_group_ids=["sg-06f7d42f923804e56"]
   subnet_id="subnet-0d5dfc3739ac57429"
-    tags = {
-        Name = "Pakdude Instance"
-    }
+  tags = {
+    Name = "Pakdude Instance"
+  }
 }
 
-# Networking
-
+# Networking VPC
 resource "aws_vpc" "tf_vpc" {
-    cidr_block           = "var.vpc_cidr"
-    enable_dns_support   = true
-    enable_dns_hostnames = true
-    tags = {
-        Name = "Staging VPC"
-    }
+  cidr_block           = "var.aws_vpc_cidr"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "Staging VPC"
+  }
 }
 
-resource "aws_internet_gateway" "igw" {
+# Networking IGW
+resource "aws_internet_gateway" "tf_igw" {
     vpc_id = "aws_vpc.tf_vpc.id"
     tags = {
-        Name = "Staging IGW"
+      Name = "Staging IGW"
     }
+}
+
+# Networking Route Tables
+resource "aws_route_table" "tf_route_table" {
+  vpc_id = "aws_vpc.tf_vpc.id"
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "aws_internet_gateway.tf_igw.id"
+  }
+  tags = {
+    Name = "tf_public_rt"
+  }
+}
+
+# Networking Subnets
+resource "aws_subnet" "tf_public1_subnet" {
+  vpc_id = "aws_vpc.tf_vpc.id"
+  cidr_block = var.cidrs["public1"]
 }
 
 resource "aws_eip" "ip" {
