@@ -14,3 +14,7 @@ data "aws_availability_zones" "available" {}
 
 # Networking
 variable "aws_vpc_cidr" {}
+
+variable "cidrs" {
+  type = "map"
+}
