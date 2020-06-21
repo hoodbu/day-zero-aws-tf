@@ -1,10 +1,10 @@
 provider "aws" {
   profile    = "default"
-  region     = var.region
+  region     = var.aws_region
 }
 
 resource "aws_instance" "example" {
-  ami           = var.amis[var.region]
+  ami           = var.amis[var.aws_region]
   instance_type = "t2.micro"
   vpc_security_group_ids=["sg-06f7d42f923804e56"]
   subnet_id="subnet-0d5dfc3739ac57429"
