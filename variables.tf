@@ -10,9 +10,7 @@ variable "amis" {
   }
 }
 
-data "aws_availability_zones" "available" {
-    state = "available"
-}
+data "aws_availability_zones" "available" {}
 
 # Networking
 variable "aws_vpc_cidr" {}
