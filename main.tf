@@ -13,8 +13,10 @@ resource "aws_instance" "example" {
     }
 }
 
-resource "aws_vpc" "vpc" {
-    cidr_block           = "10.0.0.0/16"
+# Networking
+
+resource "aws_vpc" "tf_vpc" {
+    cidr_block           = "var.vpc_cidr"
     enable_dns_support   = true
     enable_dns_hostnames = true
     tags = {
@@ -23,7 +25,7 @@ resource "aws_vpc" "vpc" {
 }
 
 resource "aws_internet_gateway" "igw" {
-    vpc_id = "aws_vpc.vpc.id"
+    vpc_id = "aws_vpc.tf_vpc.id"
     tags = {
         Name = "Staging IGW"
     }
