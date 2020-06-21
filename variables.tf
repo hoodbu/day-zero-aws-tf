@@ -16,5 +16,5 @@ data "aws_availability_zones" "available" {}
 variable "aws_vpc_cidr" {}
 
 variable "aws_cidrs" {
-  type = "map"
+  type = map
 }
