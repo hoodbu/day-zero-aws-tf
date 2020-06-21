@@ -10,3 +10,4 @@ variable "amis" {
   }
 }
 
+data "aws_availability_zones" "available" {}
