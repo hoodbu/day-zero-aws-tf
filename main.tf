@@ -79,10 +79,10 @@ resource "aws_route_table_association" "tf_private1_association" {
   route_table_id = "aws_default_route_table.tf_private_rt.id"
 }
 
-# Security Groups
+# Security Group - Bastion Host (Developer)
 resource "aws_security_group" "tf_dev_sg" {
   Name = "tf_dev_sg"
-  Description = "Used for access to Dev instances"
+  Description = "Used for private access to Dev instances"
   vpc_id = "aws_vpc.tf_vpc.id"
   
   # SSH
@@ -100,3 +100,23 @@ resource "aws_security_group" "tf_dev_sg" {
   }  
 }
   
+# Security Group - Private Instances
+resource "aws_security_group" "tf_private_sg" {
+  Name = "tf_private_sg"
+  Description = "Used for private instances"
+  vpc_id = "aws_vpc.tf_vpc.id"
+  
+  # SSH
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [var.vpc_id]
+  }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }  
+}
