@@ -13,6 +13,4 @@ variable "amis" {
 data "aws_availability_zones" "available" {}
 
 # Networking
-variable "aws_vpc_cidr" {
-  default = "172.16.0.0/16"
-}
+variable "aws_vpc_cidr" {}
