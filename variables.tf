@@ -2,7 +2,7 @@ variable "aws_region" {
   default = "us-west-1"
 }
 
-variable "dev_instance_type" {}
+variable "instance_type" {}
 
 variable "amis" {
   type = map
