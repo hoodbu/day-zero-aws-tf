@@ -1,6 +1,6 @@
 provider "aws" {
-  profile    = "default"
-  region     = var.aws_region
+  profile = "default"
+  region  = var.aws_region
 }
 
 # Networking VPC
@@ -15,25 +15,26 @@ resource "aws_vpc" "tf_vpc" {
 
 # Networking IGW
 resource "aws_internet_gateway" "tf_igw" {
-    vpc_id = "aws_vpc.tf_vpc.id"
-    tags = {
-      Name = "Staging IGW"
-    }
+  vpc_id = aws_vpc.tf_vpc.id
+  tags = {
+    Name = "tf_igw"
+  }
 }
 
 # Networking Route Tables
 resource "aws_route_table" "tf_public_rt" {
-  vpc_id = "aws_vpc.tf_vpc.id"
+  vpc_id = aws_vpc.tf_vpc.id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "aws_internet_gateway.tf_igw.id"
+    gateway_id = aws_internet_gateway.tf_igw.id
   }
   tags = {
     Name = "tf_public_rt"
   }
 }
-resource "aws_route_table" "tf_private_rt" {
-  vpc_id = "aws_vpc.tf_vpc.id"
+resource "aws_default_route_table" "tf_private_rt" {
+  default_route_table_id = aws_vpc.tf_vpc.default_route_table_id
+
   tags = {
     Name = "tf_private_rt"
   }
@@ -41,19 +42,19 @@ resource "aws_route_table" "tf_private_rt" {
 
 # Networking Subnets
 resource "aws_subnet" "tf_public1_subnet" {
-  vpc_id = "aws_vpc.tf_vpc.id"
-  cidr_block = var.aws_cidrs["public1"]
+  vpc_id                  = aws_vpc.tf_vpc.id
+  cidr_block              = var.aws_cidrs["public1"]
   map_public_ip_on_launch = true
-  availability_zone = data.aws_availability_zones.available.names[0]
+  availability_zone       = data.aws_availability_zones.available.names[0]
   tags = {
     Name = "tf_public1"
   }
 }
 resource "aws_subnet" "tf_private1_subnet" {
-  vpc_id = "aws_vpc.tf_vpc.id"
-  cidr_block = var.aws_cidrs["private1"]
+  vpc_id                  = aws_vpc.tf_vpc.id
+  cidr_block              = var.aws_cidrs["private1"]
   map_public_ip_on_launch = false
-  availability_zone = data.aws_availability_zones.available.names[0]
+  availability_zone       = data.aws_availability_zones.available.names[0]
   tags = {
     Name = "tf_private1"
   }
@@ -61,73 +62,82 @@ resource "aws_subnet" "tf_private1_subnet" {
 
 # Networking Subnet Associations
 resource "aws_route_table_association" "tf_public1_association" {
-  subnet_id = "aws_subnet.tf_public1_subnet.id"
-  route_table_id = "aws_route_table.tf_public_rt.id"
+  subnet_id      = aws_subnet.tf_public1_subnet.id
+  route_table_id = aws_route_table.tf_public_rt.id
 }
 resource "aws_route_table_association" "tf_private1_association" {
-  subnet_id = "aws_subnet.tf_private1_subnet.id"
-  route_table_id = "aws_default_route_table.tf_private_rt.id"
+  subnet_id      = aws_subnet.tf_private1_subnet.id
+  route_table_id = aws_default_route_table.tf_private_rt.id
 }
 
 # Security Group - Bastion Host (Developer)
 resource "aws_security_group" "tf_dev_sg" {
-  name = "tf_dev_sg"
+  name        = "tf_dev_sg"
   description = "Used for private access to Dev instances"
-  vpc_id = "aws_vpc.tf_vpc.id"
-  
+  vpc_id      = aws_vpc.tf_vpc.id
+
   # SSH
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = [var.localip]
   }
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }  
+  }
 }
-  
+
 # Security Group - Private Instances
 resource "aws_security_group" "tf_private_sg" {
-  name = "tf_private_sg"
+  name        = "tf_private_sg"
   description = "Used for private instances"
-  vpc_id = "aws_vpc.tf_vpc.id"
-  
+  vpc_id      = aws_vpc.tf_vpc.id
+
   # SSH
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = [var.aws_vpc_cidr]
   }
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }  
+  }
 }
 
 # Key pair
-#resource "aws_key_pair" "tf_auth" {
+# resource "aws_key_pair" "tf_auth" {
 #  key_name = var.key_name
 #  public_key = file{var.public_key_path}}
 # }
 
-# Dev Instance
-
+# Instance - Bastion Host (Developer)
 resource "aws_instance" "tf_dev_instance" {
-  ami           = var.amis[var.aws_region]
-  # instance_type = "t2.micro"
-  # ami = var.dev_ami
-  instance_type = var.dev_instance_type
-  vpc_security_group_ids = ["aws_security_group.tf_dev_sg.id"]
-  subnet_id = aws_subnet.tf_public1_subnet.id
-  
+  ami = var.amis[var.aws_region]
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.tf_dev_sg.id]
+  subnet_id              = aws_subnet.tf_public1_subnet.id
+
   tags = {
-    Name = "tf_dev"
+    Name = "tf_bastion_host"
+  }
+}
+
+# Instance - Private
+resource "aws_instance" "tf_pri_instance" {
+  ami = var.amis[var.aws_region]
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.tf_dev_sg.id]
+  subnet_id              = aws_subnet.tf_private1_subnet.id
+
+  tags = {
+    Name = "tf_private1"
   }
 }
