@@ -3,16 +3,6 @@ provider "aws" {
   region     = var.aws_region
 }
 
-resource "aws_instance" "example" {
-  ami           = var.amis[var.aws_region]
-  instance_type = "t2.micro"
-  vpc_security_group_ids=["sg-06f7d42f923804e56"]
-  subnet_id="subnet-0d5dfc3739ac57429"
-  tags = {
-    Name = "Pakdude Instance"
-  }
-}
-
 # Networking VPC
 resource "aws_vpc" "tf_vpc" {
   cidr_block           = var.aws_vpc_cidr
@@ -119,4 +109,24 @@ resource "aws_security_group" "tf_private_sg" {
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }  
+}
+
+# Key pair
+resource "aws_key_pair" "tf_auth" {
+  key_name = var.key_name
+  public_key = file{var.public_key_path}}
+
+# Dev Instance
+
+resource "aws_instance" "tf_dev_instance" {
+  # ami           = var.amis[var.aws_region]
+  # instance_type = "t2.micro"
+  ami = var.dev_ami
+  instance_type = var.dev_instance_type
+  vpc_security_group_ids = ["aws_security_group.tf_dev_sg.id"]
+  subnet_id = aws_subnet.tf_public1_subnet.id
+  
+  tags = {
+    Name = "tf_dev"
+  }
 }
