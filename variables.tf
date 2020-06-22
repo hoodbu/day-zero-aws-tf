@@ -6,10 +6,10 @@ variable "dev_instance_type" {}
 
 variable "dev_ami" {
   type = map
-  default = {
-    "us-east-1" = "ami-b374d5a5"
-    "us-west-2" = "ami-4b32be2b"
-  }
+  # default = {
+  #   "us-east-1" = "ami-b374d5a5"
+  #   "us-west-2" = "ami-4b32be2b"
+  # }
 }
 
 data "aws_availability_zones" "available" {}
