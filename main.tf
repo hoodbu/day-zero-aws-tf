@@ -141,3 +141,9 @@ resource "aws_instance" "tf_pri_instance" {
     Name = "tf_private1"
   }
 }
+
+# Elastic IP
+resource "aws_eip" "ip" {
+  vpc      = true
+  instance = aws_instance.tf_dev_instance.id
+}
