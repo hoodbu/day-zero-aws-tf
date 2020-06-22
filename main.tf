@@ -120,9 +120,9 @@ resource "aws_security_group" "tf_private_sg" {
 # Dev Instance
 
 resource "aws_instance" "tf_dev_instance" {
-  # ami           = var.amis[var.aws_region]
+  ami           = var.amis[var.aws_region]
   # instance_type = "t2.micro"
-  ami = var.dev_ami
+  # ami = var.dev_ami
   instance_type = var.dev_instance_type
   vpc_security_group_ids = ["aws_security_group.tf_dev_sg.id"]
   subnet_id = aws_subnet.tf_public1_subnet.id
