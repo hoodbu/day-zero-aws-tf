@@ -4,7 +4,7 @@ variable "aws_region" {
 
 variable "dev_instance_type" {}
 
-variable "dev_ami" {
+variable "amis" {
   type = map
   default = {
     "us-east-1" = "ami-b374d5a5"
