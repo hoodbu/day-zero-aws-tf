@@ -135,7 +135,7 @@ resource "aws_instance" "tf_dev_instance" {
 resource "aws_instance" "tf_pri_instance" {
   ami                    = var.amis[var.aws_region]
   instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.tf_dev_sg.id]
+  vpc_security_group_ids = [aws_security_group.tf_pri_sg.id]
   subnet_id              = aws_subnet.tf_private1_subnet.id
 
   tags = {
