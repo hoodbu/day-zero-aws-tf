@@ -24,6 +24,6 @@ data "aws_availability_zones" "available" {}
 
 variable "localip" {}
 
-variable "public_key_path" {}
+variable "public_key" {}
 
 variable "key_name" {}

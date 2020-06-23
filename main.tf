@@ -115,7 +115,7 @@ resource "aws_security_group" "tf_pri_sg" {
 # Key pair
 resource "aws_key_pair" "tf_auth" {
   key_name   = var.key_name
-  public_key = file(var.public_key_path)
+  public_key = var.public_key
 }
 
 # Instance - Bastion Host (Developer)
@@ -135,6 +135,7 @@ resource "aws_instance" "tf_dev_instance" {
 resource "aws_instance" "tf_pri_instance" {
   ami                    = var.amis[var.aws_region]
   instance_type          = var.instance_type
+  key_name               = aws_key_pair.tf_auth.id
   vpc_security_group_ids = [aws_security_group.tf_pri_sg.id]
   subnet_id              = aws_subnet.tf_private1_subnet.id
 
