@@ -92,8 +92,8 @@ resource "aws_security_group" "tf_dev_sg" {
 }
 
 # Security Group - Private Instances
-resource "aws_security_group" "tf_private_sg" {
-  name        = "tf_private_sg"
+resource "aws_security_group" "tf_pri_sg" {
+  name        = "tf_pri_sg"
   description = "Used for private instances"
   vpc_id      = aws_vpc.tf_vpc.id
 
