@@ -2,6 +2,14 @@ variable "aws_region" {
   default = "us-west-1"
 }
 
+# Networking
+variable "aws_vpc_cidr" {}
+
+variable "aws_cidrs" {
+  type = map
+}
+
+# Compute
 variable "instance_type" {}
 
 variable "amis" {
@@ -14,11 +22,8 @@ variable "amis" {
 
 data "aws_availability_zones" "available" {}
 
-# Networking
-variable "aws_vpc_cidr" {}
-
-variable "aws_cidrs" {
-  type = map
-}
-
 variable "localip" {}
+
+variable "public_key_path" {}
+
+variable "key_name" {}
