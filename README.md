@@ -1,5 +1,5 @@
-# terraform-aws-primer
-Terraform Primer creates the following resources in AWS:
+# day-zero-aws
+This Terraform script creates the following Day Zero resources in AWS:
 1. One (1) VPC in region defined in aws_region variable. All subsequent resources created in that.
 2. One (1) Public Route Table
 3. One (1) Private Route Table
