@@ -7,6 +7,10 @@ output "tf_vpc" {
   value = aws_vpc.tf_vpc.id
 }
 
+output "tf_public1_subnet" {
+  value = aws_subnet.tf_public1_subnet.id
+}
+
 output "tf_dev_ip" {
   value = aws_eip.tf_dev_ip.public_ip
 }
