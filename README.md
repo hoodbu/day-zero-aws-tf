@@ -11,4 +11,4 @@ This Terraform script creates the following Day Zero resources in AWS:
 9. One (1) Security Group allowing SSH access from localip variable. Assigned to Instance in Public Subnet.
 10. One (1) Elastic IP address allocated to instance in Public Subnet.
 11. One (1) t2.micro EC2 instance in Private Subnet.
-12. One (1) Security Group allowing SSH access from aws_vpc_cidr variable. Assigned to Instance in Private Subnet.
+12. One (1) Security Group allowing SSH access from aws_vpc_cidr variable. Assigned to instance in Private Subnet.
